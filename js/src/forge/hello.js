@@ -1,23 +1,12 @@
-setTimeout(
-  name => {
-    print(name);
-  },
-  3000,
-  "Varad"
-);
-setTimeout(
-  age => {
-    print(age);
-  },
-  8000,
 
-  21
+print(typeof clearTimeout);
+const id = setTimeout(
+    () => {
+        print("Hello");
+    },
+    3000
 );
-setTimeout(
-  ok => {
-    print(ok);
-  },
-  4000,
 
-  true
-);
+print(id);
+
+clearTimeout(id);

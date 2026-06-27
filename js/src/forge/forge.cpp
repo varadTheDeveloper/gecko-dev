@@ -151,6 +151,51 @@ args.rval().setInt32(id);
 
     return true;
 }
+static bool ClearTimeout(
+    JSContext* cx,
+    unsigned argc,
+    JS::Value* vp)
+{
+    JS::CallArgs args =
+        JS::CallArgsFromVp(argc, vp);
+
+    if (argc < 1)
+    {
+        return false;
+    }
+
+    int32_t id;
+
+    if (!JS::ToInt32(
+            cx,
+            args[0],
+            &id))
+    {
+        return false;
+    }
+printf("clearTimeout(%d)\n", id);
+
+for (
+    auto it = timers.begin();
+    it != timers.end();
+)
+{
+    if ((*it)->id == id)
+    {
+        printf("Removing timer %d\n", id);
+
+        timers.erase(it);
+
+        break;
+    }
+
+    ++it;
+}
+
+    args.rval().setUndefined();
+
+    return true;
+}
 int main(int argc, char* argv[])
 {
     if (!JS_Init()) {
@@ -191,7 +236,14 @@ int main(int argc, char* argv[])
         if (!JS::InitRealmStandardClasses(cx)) {
             return 1;
         }
-
+JS_DefineFunction(
+    cx,
+    global,
+    "clearTimeout",
+    ClearTimeout,
+    1,
+    0
+);
         if (!JS_DefineFunction(
                 cx,
                 global,
