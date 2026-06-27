@@ -51,6 +51,7 @@ if not CONFIG["JS_DISABLE_SHELL"]:
     DIRS += [
         "rust",
         "shell",
+        "forge",
     ]
 
     TEST_DIRS += [
