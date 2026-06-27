@@ -1,12 +1,12 @@
+queueMicrotask(() => {
+    print("microtask");
+});
 
-print(typeof clearTimeout);
-const id = setTimeout(
-    () => {
-        print("Hello");
-    },
-    3000
-);
+setTimeout(() => {
+    print("timeout");
+}, 0);
 
-print(id);
+setInterval(() => {
+    print("tick");
+}, 1000);
 
-clearTimeout(id);
