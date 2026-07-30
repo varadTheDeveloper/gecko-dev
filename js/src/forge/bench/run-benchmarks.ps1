@@ -14,6 +14,14 @@ the same microtask queue one continuation at a time rather than as one
 flat burst). This second batch has not yet been run end-to-end — please
 report back if anything errors out.
 
+Extended again after Phase 7.3 (the `fs.*Sync` JS bindings, now
+real-build-confirmed -- see Fs.md/HISTORY.md) with fs-bench.js, exercising
+readFileSync/writeFileSync/appendFileSync/existsSync/mkdirSync/rmSync/
+statSync -- the first script able to close the "filesystem operations"
+gap the note below used to flag as not-yet-benchmarkable. This one has
+not yet been run end-to-end either — please report back what it prints,
+same as the timer/microtask/promise-chain batch above.
+
 Usage:
     .\run-benchmarks.ps1
     .\run-benchmarks.ps1 -ForgePath "C:\Forge\bin\forge.exe" -Iterations 7
@@ -25,14 +33,15 @@ architecture roadmap wants cold-start/throughput compared), and prints +
 logs a results table so progress is a number you can watch move, not a
 feeling.
 
-Note on scope: this script only covers what's actually JS-visible in
-Forge today (print/setTimeout/setInterval/clearTimeout/queueMicrotask,
-plus whatever engine-native globals SpiderMonkey provides, like JSON and
-Promise). Forge Core's File/Socket/Thread (Phases 3-5) are C++-only so
-far -- nothing in forge.cpp has wired them up as JS-callable functions
-yet -- so there is deliberately no filesystem or networking benchmark
-here; Node/Bun have fs/net bindings to compare against, Forge doesn't
-yet have anything to point them at.
+Note on scope: this script covers what's actually JS-visible in Forge
+today (print/setTimeout/setInterval/clearTimeout/queueMicrotask, the
+fs.*Sync surface added in Phase 7.3, plus whatever engine-native globals
+SpiderMonkey provides, like JSON and Promise). Forge Core's Socket/Thread
+(Phases 4-5) are still C++-only -- nothing in forge.cpp has wired them up
+as JS-callable functions yet -- so there is deliberately no networking or
+threading benchmark here; Node/Bun have net/worker_threads bindings to
+compare against, Forge doesn't yet have anything to point them at. (File
+was the exception: Phase 7.3 wired it up, so fs-bench.js now covers it.)
 #>
 
 param(
@@ -47,7 +56,8 @@ $Benchmarks = @(
     "loop-bench.js",
     "timer-bench.js",
     "microtask-bench.js",
-    "promise-chain-bench.js"
+    "promise-chain-bench.js",
+    "fs-bench.js"
 )
 
 function Resolve-Runtime {
